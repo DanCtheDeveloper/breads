@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to the World of Bread!')
 })
   
-// Breads/middleware:
+// Middleware:
 const breadsController = require('./controllers/breads_controller.js')
 app.use(methodOverride('_method'))
 app.use('/breads', breadsController)
@@ -21,8 +21,6 @@ app.use(express.urlencoded({extended:true}))
 app.set('views', __dirname + '/views')
 app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
-
-
   
 // 404 Page
 app.get('*', (req, res) => {
