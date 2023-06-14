@@ -28,6 +28,9 @@ breads.get('/:id/edit', (req, res) => {
       bread: foundBread
     })
   })
+  // .catch( err => {
+  //   res.send('<h1>404: This is not a page you should be on')
+  // })
 })
 
 
@@ -35,6 +38,8 @@ breads.get('/:id/edit', (req, res) => {
    breads.get('/:id', (req, res) => {
       Bread.findById(req.params.id)
           .then(foundBread => {
+            const bakedBy = foundBread.getBakedBy()
+            console.log(bakedBy)
               res.render('show', {
                   bread: foundBread
               })
@@ -59,8 +64,14 @@ breads.get('/:id/edit', (req, res) => {
       req.body.hasGluten = 'false'
     }
     Bread.create(req.body)
-    res.redirect('/breads')
-  })
+    .then(() => {
+      res.redirect('/breads');
+    })
+    .catch((error) => {
+      console.error('Error creating bread:', error);
+      res.status(400).send('Validation failed. this bread could not be created.');
+    });
+});
 
   //Delete:
   breads.delete('/:id', (req, res) => {
