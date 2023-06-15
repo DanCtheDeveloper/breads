@@ -4,18 +4,6 @@ const Bread = require('../models/bread.js')
 const mongoose = require ('mongoose')
 const Baker = require('../models/baker.js')
 
-
-// INDEX
-breads.get('/', (req, res) => {
-  Bread.find()
-  .then(foundBreads => {
-    res.render('index', {
-      breads: foundBreads,
-      title: 'Index Page'
-    })
-  })  
-})
-
 // NEW
 breads.get('/new', (req, res) => {
   Baker.find()
@@ -26,23 +14,55 @@ breads.get('/new', (req, res) => {
   })  
 })
 
+// INDEX
+breads.get('/', (req, res) => {
+  Baker.find()
+  .then(foundBakers => {
+    Bread.find()
+    .then(foundBreads => {
+      res.render('index', {
+        breads: foundBreads,
+        bakers: foundBakers,
+        title: 'Index Page'
+      })
+    })
+  })  
+})
+
 // EDIT
 breads.get('/:id/edit', (req, res) => {
-  Bread.findById(req.params.id)
-  .then(foundBread => {
-    res.render('edit', {
-      bread: foundBread
+  Baker.find()
+    .then(foundBakers => {
+        Bread.findById(req.params.id)
+          .then(foundBread => {
+            res.render('edit', {
+                bread: foundBread, 
+                bakers: foundBakers 
+            })
+          })
     })
-  })
+})
+
+
+
+// EDIT before populate
+// breads.get('/:id/edit', (req, res) => {
+//   Bread.findById(req.params.id)
+//   .then(foundBread => {
+//     res.render('edit', {
+//       bread: foundBread
+//     })
+//   })
   // .catch( err => {
   //   res.send('<h1>404: This is not a page you should be on')
   // })
-})
+// })
 
 
 // SHOW Route
    breads.get('/:id', (req, res) => {
       Bread.findById(req.params.id)
+      .populate('baker')
           .then(foundBread => {
             const bakedBy = foundBread.getBakedBy()
             console.log(bakedBy)
