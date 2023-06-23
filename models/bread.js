@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-//Creating shorthand forthe Schema constructor:
+//Creating shorthand for the Schema constructor:
 const {Schema} = mongoose
 
 //Schema:

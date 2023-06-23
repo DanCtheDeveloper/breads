@@ -2,7 +2,7 @@
 const express = require('express')
 const baker = express.Router()
 const Baker = require('../models/baker.js')
-const bakerSeedData = require('../models/baker_seed.js')
+const bakerSeedData = require('../models/baker_seed')
 
 //Index:
 baker.get('/', (req, res) => {
@@ -13,22 +13,36 @@ baker.get('/', (req, res) => {
     })
 })
 
-baker.get('/data/seed', (req, res) => {
-    Baker.insertMany(bakerSeedData)
-    .then(res.redirect('/breads'))
-})
 
 // Show: 
 baker.get('/:id', (req, res) => {
     Baker.findById(req.params.id)
-        .populate('breads')
-        .then(foundBaker => {
-            res.render('bakerShow', {
-                baker: foundBaker
-            })
+    .populate({
+        path: 'breads',
+        options: {limit:5}
+    })
+    .then(foundBaker => {
+        res.render('bakerShow', {
+            baker: foundBaker
         })
+    })
 })
 
+// delete
+baker.delete('/:id', (req, res) => {
+    console.log("req")
+    Baker.findByIdAndDelete(req.params.id)
+    .then(deletedBaker => { 
+        res.status(303).redirect('/breads')
+    }).catch(err => {
+        console.log("Error", err)
+    })
+})
+
+baker.get('/data/seed', (req, res) => {
+    Baker.insertMany(bakerSeedData)
+    .then(res.redirect('/breads'))
+})
 
 
 // export
